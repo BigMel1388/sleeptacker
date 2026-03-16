@@ -14,7 +14,7 @@ import HomeBar from "../components/HomeBar";
 
 const screenWidth = Dimensions.get("window").width;
 
-const ESP_IP = "192.168.1.23"; // <-- CHANGE to your ESP32 IP
+const ESP_IP = "172.23.83.73"; // Updated IP
 
 type SensorData = {
   temperature: number;
@@ -57,7 +57,6 @@ export default function IndicatorsScreen() {
     }
   };
 
-  // Hide Android navigation bar
   useEffect(() => {
     console.log("🎮 Setting up Android navigation bar");
     NavigationBar.setBehaviorAsync("overlay-swipe");
@@ -88,7 +87,7 @@ export default function IndicatorsScreen() {
 
         {isLoading && (
           <View style={styles.statusCard}>
-            <Text style={styles.statusText}>� ESP32 Status: Connecting...</Text>
+            <Text style={styles.statusText}>⏳ ESP32 Status: Connecting...</Text>
             <Text style={styles.statusSubtext}>Attempting to connect to {ESP_IP}</Text>
           </View>
         )}
@@ -96,7 +95,7 @@ export default function IndicatorsScreen() {
         {!isLoading && connectionStatus === 'disconnected' && (
           <View style={styles.statusCard}>
             <Text style={styles.statusText}>📡 ESP32 Status: Disconnected</Text>
-            <Text style={styles.statusSubtext}>Please check your ESP32 connection and IP address (192.168.1.23)</Text>
+            <Text style={styles.statusSubtext}>Please check your ESP32 connection and IP address ({ESP_IP})</Text>
             <TouchableOpacity style={styles.retryButton} onPress={() => {
               setIsLoading(true);
               fetchSensor();
@@ -115,7 +114,6 @@ export default function IndicatorsScreen() {
         {/* TEMPERATURE */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Temperature</Text>
-
           <LineChart
             data={{
               labels: temperature.length ? ["1","2","3","4","5","6"].slice(-temperature.length) : ["0"],
@@ -137,7 +135,6 @@ export default function IndicatorsScreen() {
         {/* HUMIDITY */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Humidity</Text>
-
           <LineChart
             data={{
               labels: humidity.length ? ["1","2","3","4","5","6"].slice(-humidity.length) : ["0"],
@@ -159,7 +156,6 @@ export default function IndicatorsScreen() {
         {/* PRESSURE */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Pressure</Text>
-
           <LineChart
             data={{
               labels: pressure.length ? ["1","2","3","4","5","6"].slice(-pressure.length) : ["0"],
@@ -181,7 +177,6 @@ export default function IndicatorsScreen() {
         {/* CO2 */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>CO₂ level</Text>
-
           <LineChart
             data={{
               labels: co2.length ? ["1","2","3","4","5","6"].slice(-co2.length) : ["0"],
@@ -211,41 +206,34 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
   },
-
   container: {
     paddingTop: 80,
     paddingHorizontal: 20,
-    paddingBottom: 100, // Add padding for HomeBar
+    paddingBottom: 100,
   },
-
   scrollView: {
     flex: 1,
   },
-
   title: {
     fontSize: 38,
     fontWeight: "700",
     color: "white",
     marginBottom: 20,
   },
-
   card: {
     backgroundColor: "rgba(255,255,255,0.9)",
     borderRadius: 18,
     padding: 15,
     marginBottom: 25,
   },
-
   cardTitle: {
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 10,
   },
-
   chart: {
     borderRadius: 16,
   },
-
   statusCard: {
     backgroundColor: "rgba(255,255,255,0.9)",
     borderRadius: 18,
@@ -253,14 +241,12 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     alignItems: "center",
   },
-
   statusText: {
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
     textAlign: "center",
   },
-
   statusSubtext: {
     fontSize: 14,
     color: "#666",
@@ -268,7 +254,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 15,
   },
-
   retryButton: {
     backgroundColor: "#C9A4E7",
     paddingHorizontal: 20,
@@ -276,7 +261,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 10,
   },
-
   retryText: {
     color: "white",
     fontSize: 16,
