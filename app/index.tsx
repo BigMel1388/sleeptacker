@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,11 +12,17 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
+import * as NavigationBar from "expo-navigation-bar";
 
 export default function Index() {
   const [name, setName] = useState("");
   const router = useRouter();
   const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    NavigationBar.setBehaviorAsync("overlay-swipe");
+    NavigationBar.setVisibilityAsync("hidden");
+  }, []);
 
   const handleSubmit = () => {
     if (!name.trim()) return;
@@ -28,7 +34,10 @@ export default function Index() {
       duration: 800,
       useNativeDriver: true,
     }).start(() => {
-      router.replace("/home");
+      router.replace({
+        pathname: "/home",
+        params: { name: name },
+      });
     });
   };
 

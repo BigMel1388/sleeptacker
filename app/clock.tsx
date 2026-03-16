@@ -7,13 +7,15 @@ import {
   TouchableOpacity,
   FlatList,
   Switch,
+  Animated,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Notifications from "expo-notifications";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
-import { Animated } from "react-native";
 import { useRef } from "react";
+import * as NavigationBar from "expo-navigation-bar";
+import HomeBar from "../components/HomeBar";
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -29,34 +31,39 @@ export default function Clock() {
 
   const router = useRouter();
 
-const homeAnim = useRef(new Animated.Value(0)).current;
-const clockAnim = useRef(new Animated.Value(0)).current;
-const planetAnim = useRef(new Animated.Value(0)).current;
-const profileAnim = useRef(new Animated.Value(0)).current;
+  const homeAnim = useRef(new Animated.Value(0)).current;
+  const clockAnim = useRef(new Animated.Value(0)).current;
+  const planetAnim = useRef(new Animated.Value(0)).current;
+  const profileAnim = useRef(new Animated.Value(0)).current;
 
-function animateIcon(anim: Animated.Value) {
-  Animated.sequence([
-    Animated.timing(anim, {
-      toValue: -10,
-      duration: 120,
-      useNativeDriver: true,
-    }),
-    Animated.timing(anim, {
-      toValue: 0,
-      duration: 120,
-      useNativeDriver: true,
-    }),
-  ]).start();
-}
+  function animateIcon(anim: Animated.Value) {
+    Animated.sequence([
+      Animated.timing(anim, {
+        toValue: -10,
+        duration: 120,
+        useNativeDriver: true,
+      }),
+      Animated.timing(anim, {
+        toValue: 0,
+        duration: 120,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }
 
   const [alarms, setAlarms] = useState<Alarm[]>([]);
   const [showPicker, setShowPicker] = useState(false);
   const [selectedAlarm, setSelectedAlarm] = useState<string | null>(null);
 
+  // Hide navigation bar
+  useEffect(() => {
+    NavigationBar.setBehaviorAsync("overlay-swipe");
+    NavigationBar.setVisibilityAsync("hidden");
+  }, []);
+
   useEffect(() => {
     Notifications.requestPermissionsAsync();
 
-    // ADDED
     Notifications.setNotificationChannelAsync("alarm-channel", {
       name: "Alarms",
       importance: Notifications.AndroidImportance.MAX,
@@ -75,12 +82,8 @@ function animateIcon(anim: Animated.Value) {
       trigger: {
         hour: alarm.hour,
         minute: alarm.minute,
-        repeats: true,
-
-        // ADDED
         type: Notifications.SchedulableTriggerInputTypes.DAILY,
         channelId: "alarm-channel",
-
       },
     });
   }
@@ -161,6 +164,7 @@ function animateIcon(anim: Animated.Value) {
           uri: "https://wallpapers.com/images/high/mixed-media-van-gogh-starry-night-window-uwyzlfcofsupmgw3.webp",
         }}
         style={styles.background}
+        resizeMode="cover"
       >
 
         <FlatList
@@ -176,7 +180,6 @@ function animateIcon(anim: Animated.Value) {
                 </Text>
               </TouchableOpacity>
 
-              {/* Repeat Days */}
               <View style={styles.repeatRow}>
                 {days.map((day, index) => (
                   <TouchableOpacity
@@ -210,20 +213,12 @@ function animateIcon(anim: Animated.Value) {
           />
         )}
 
-        {/* Add Alarm */}
         <TouchableOpacity style={styles.addButton} onPress={addAlarm}>
           <Ionicons name="add" size={30} color="white" />
         </TouchableOpacity>
 
-        {/* Bottom Bar */}
-        <View style={styles.bottomBar}>
-          <Ionicons name="home" size={24} color="#C9A4E7" />
-          <Ionicons name="time-outline" size={24} color="white" />
-          <Ionicons name="planet-outline" size={24} color="white" />
-          <Ionicons name="person-outline" size={24} color="white" />
-        </View>
-
       </ImageBackground>
+      <HomeBar />
     </View>
   );
 }
@@ -236,6 +231,7 @@ const styles = StyleSheet.create({
 
   background: {
     flex: 1,
+    position: 'relative',
   },
 
   alarmCard: {
@@ -287,18 +283,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-//gay
-  bottomBar: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    paddingVertical: 28,
-    height: 90,
-    backgroundColor: "#111",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-  },
+
 });
